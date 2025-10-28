@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.2
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command: ["start-dev"]
+
+  fastapi:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - keycloak
+    environment:
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=myrealm
+      - KEYCLOAK_CLIENT_ID=fastapi-client
+      - KEYCLOAK_CLIENT_SECRET=K5ZIzE9BSlW8jGTwdybvVMkNTcW7hn1K
+  
+  etcd:
+    image: bitnamilegacy/etcd:3.5.7
+    ports:
+      - "2379:2379"
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  apisix:
+    image: apache/apisix:3.14.1-ubuntu
+    ports:
+      - "9080:9080"
+      - "9180:9180"
+      - "9443:9443"
+      - "9092:9092"
+      - "9100:9100"
+      - "9091:9091"
+    environment:
+      - ETCD_HOST=etcd:2379
+      - APISIX_DEPLOYMENT_ETCD_HOST=["http://etcd:2379"]
+    volumes:
+      - ./apisix-config.yaml:/usr/local/apisix/conf/config.yaml
+    depends_on:
+      etcd:
+        condition: service_healthy
