@@ -39,7 +39,26 @@ Configure Keycloak with:
 
 ## Authentication Flow
 
-Get an access token:
+Get an access token by password:
+```
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=fastapi-client" \
+  -d "client_secret=K5ZIzE9BSlW8jGTwdybvVMkNTcW7hn1K" \
+  -d "username=diman" \
+  -d "password=diman" \
+  "http://localhost:8080/realms/myrealm/protocol/openid-connect/token"
+```
+
+Extract the token:
+```bash
+TOKEN=$(curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=fastapi-client" -d "grant_type=password" -d "client_secret=K5ZIzE9BSlW8jGTwdybvVMkNTcW7hn1K" -d "username=diman" -d "password=diman" http://localhost:8080/realms/myrealm/protocol/openid-connect/token | jq -r '.access_token')
+echo $TOKEN
+```
+
+
+
 ```bash
 curl -X POST \
     -d "client_id=fastapi-client" \
