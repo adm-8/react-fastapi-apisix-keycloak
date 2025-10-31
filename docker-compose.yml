@@ -54,3 +54,14 @@ services:
     depends_on:
       etcd:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - fastapi
+    environment:
+      - NODE_ENV=production
