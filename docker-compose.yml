@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:18.0.2 # 18.0.2 works
+    image: quay.io/keycloak/keycloak:25.0.6 # 18.0.2 works
     ports:
       - "8080:8080"
     environment:

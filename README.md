@@ -1,3 +1,7 @@
+# Getting Started With Keycloak Identity Provider (free Identity Server alternative)
+
+https://www.youtube.com/watch?v=fvxQ8bW0vO8
+
 # React + FastAPI + APISIX + Keycloak Integration
 
 This project demonstrates how to integrate React frontend with a FastAPI backend, secured by Keycloak authentication and routed through Apache APISIX API Gateway.
@@ -44,16 +48,27 @@ Get an access token by password:
 curl -X POST \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password" \
-  -d "client_id=fastapi-client" \
-  -d "client_secret=K5ZIzE9BSlW8jGTwdybvVMkNTcW7hn1K" \
+  -d "client_id=confidential-client" \
+  -d "client_secret=meQbWVMxT1e85dNfjpie2wqTTQXeeSX1" \
   -d "username=diman" \
   -d "password=diman" \
-  "http://localhost:8080/realms/myrealm/protocol/openid-connect/token"
+  http://localhost:8080/realms/myrealm/protocol/openid-connect/token
+
+
+
+ 
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=confidential-client" \
+  -d "client_secret=meQbWVMxT1e85dNfjpie2wqTTQXeeSX1" \
+  -d "scope=openid" \
+  "http://localhost:8080/realms/myrealm/protocol/openid-connect/token" 
 ```
 
 Extract the token:
 ```bash
-TOKEN=$(curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=fastapi-client" -d "grant_type=password" -d "client_secret=K5ZIzE9BSlW8jGTwdybvVMkNTcW7hn1K" -d "username=diman" -d "password=diman" http://localhost:8080/realms/myrealm/protocol/openid-connect/token | jq -r '.access_token')
+TOKEN=$(curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=confidential-client" -d "grant_type=password" -d "client_secret=meQbWVMxT1e85dNfjpie2wqTTQXeeSX1" -d "username=diman" -d "password=diman" http://localhost:8080/realms/myrealm/protocol/openid-connect/token | jq -r '.access_token')
 echo $TOKEN
 ```
 
