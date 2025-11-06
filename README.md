@@ -48,7 +48,7 @@ Get an access token by password:
 curl -X POST \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password" \
-  -d "client_id=confidential-client" \
+  -d "client_id=public-client" \
   -d "client_secret=meQbWVMxT1e85dNfjpie2wqTTQXeeSX1" \
   -d "username=diman" \
   -d "password=diman" \

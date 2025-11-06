@@ -72,8 +72,39 @@ export interface EventOfferUpdate {
   action_type?: string | null
 }
 
+// Custom base query that adds the auth token to requests
+const baseQueryWithAuth = fetchBaseQuery({
+  baseUrl: '/api',
+  prepareHeaders: (headers) => {
+    // Get the OIDC authentication object from localStorage
+    const authString = localStorage.getItem('oidc.user:http://localhost:8080/realms/myrealm:frontend-client');
+    console.log('API service: Checking for auth token in localStorage');
+    
+    if (authString) {
+      try {
+        const auth = JSON.parse(authString);
+        console.log('API service: Found auth data in localStorage', auth);
+        
+        if (auth.access_token) {
+          console.log('API service: Adding access token to request headers');
+          // Add the access token to the headers
+          headers.set('Authorization', `Bearer ${auth.access_token}`);
+        } else {
+          console.log('API service: No access token found in auth data');
+        }
+      } catch (e) {
+        console.error('API service: Error parsing auth data:', e);
+      }
+    } else {
+      console.log('API service: No auth data found in localStorage');
+    }
+    
+    return headers;
+  },
+});
+
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Event', 'Offer'],
   endpoints: (builder) => ({
     // Events endpoints
